@@ -50,3 +50,9 @@ qtcreator-*
 # Catkin custom files
 CATKIN_IGNORE
 .vscode/
+
+# Python virtual environments and cache
+.venv/
+venv/
+roboclaw_env/
+__pycache__/
