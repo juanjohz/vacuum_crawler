@@ -58,16 +58,14 @@ void VacuumController::connect() {
     throw std::runtime_error("Restart required after a drive fault");
   }
   try {
-    if (!config_.dry_run) {
-      for (auto &driver : drivers_) {
-        driver->connect();
-      }
-      for (auto &driver : drivers_) {
-        driver->stop();
-      }
-      for (std::size_t i = 0; i < 2; ++i) {
-        versions_[i] = drivers_[i]->read_version();
-      }
+    for (auto &driver : drivers_) {
+      driver->connect();
+    }
+    for (auto &driver : drivers_) {
+      driver->stop();
+    }
+    for (std::size_t i = 0; i < 2; ++i) {
+      versions_[i] = drivers_[i]->read_version();
     }
     // Commands received before connect are discarded; startup always remains stopped.
     have_command_ = false;
@@ -127,10 +125,8 @@ void VacuumController::update(Clock::time_point now) {
     const auto age = std::chrono::duration<double>(now - last_command_).count();
     const bool stale = !have_command_ || age < 0 || age >= config_.cmd_timeout_s;
     const auto duties = calculate_duties(stale ? 0 : linear_, stale ? 0 : angular_);
-    if (!config_.dry_run) {
-      drivers_[0]->set_duty(duties[0], duties[1]);
-      drivers_[1]->set_duty(duties[2], duties[3]);
-    }
+    drivers_[0]->set_duty(duties[0], duties[1]);
+    drivers_[1]->set_duty(duties[2], duties[3]);
     last_duties_ = duties;
   } catch (const std::exception &error) {
     latch_fault(error.what());
@@ -143,14 +139,12 @@ bool VacuumController::stop() noexcept {
   linear_ = angular_ = 0;
   last_duties_.fill(0);
   bool acknowledged = true;
-  if (!config_.dry_run) {
-    for (auto &driver : drivers_) {
-      if (!driver || !driver->is_open()) {
-        continue;
-      }
-      try { driver->stop(); }
-      catch (...) { acknowledged = false; }
+  for (auto &driver : drivers_) {
+    if (!driver || !driver->is_open()) {
+      continue;
     }
+    try { driver->stop(); }
+    catch (...) { acknowledged = false; }
   }
   return acknowledged;
 }

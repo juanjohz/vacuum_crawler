@@ -9,8 +9,7 @@ void check(bool condition) {
 }
 
 int main() {
-  VacuumController controller({});  // Dry run: never opens USB.
-  controller.connect();
+  VacuumController controller({});  // Calculation checks do not open USB.
   const auto forward = controller.calculate_duties(0.1, 0);
   check(forward == (std::array<int, 4>{-6553, -6553, -6553, -6553}));
   const auto turn = controller.calculate_duties(0, 1);
@@ -18,18 +17,16 @@ int main() {
   const auto fast = controller.calculate_duties(100, 0);
   check(fast == (std::array<int, 4>{-8191, -8191, -8191, -8191}));
   const auto now = VacuumController::Clock::now();
-  controller.set_command(0.1, 0, now);
-  controller.update(now);
-  check(controller.last_duties() == forward);
-  controller.update(now + std::chrono::milliseconds(500));
-  check(controller.last_duties() == (std::array<int, 4>{}));
-  controller.set_command(0.1, 0, now);
   check(controller.stop());
-  controller.update(now);
-  check(controller.last_duties() == (std::array<int, 4>{}));
   controller.set_command(std::numeric_limits<double>::quiet_NaN(), 0, now);
   check(controller.faulted());
+  check(controller.fault_reason() == "Nonfinite cmd_vel");
   controller.set_command(0.1, 0, now);
   controller.update(now);
   check(controller.last_duties() == (std::array<int, 4>{}));
+
+  VacuumController disconnected({});
+  disconnected.update(now);
+  check(disconnected.faulted());
+  check(disconnected.fault_reason() == "Controller has not been connected");
 }

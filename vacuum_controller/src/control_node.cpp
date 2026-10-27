@@ -19,7 +19,6 @@ public:
     config.max_duty_fraction = declare_parameter("max_duty_fraction", config.max_duty_fraction);
     config.cmd_timeout_s = declare_parameter("cmd_timeout_s", config.cmd_timeout_s);
     config.serial_timeout_ms = declare_parameter("serial_timeout_ms", config.serial_timeout_ms);
-    dry_run_ = config.dry_run = declare_parameter("dry_run", config.dry_run);
     controller_ = std::make_unique<vacuum_controller::VacuumController>(std::move(config));
     controller_->connect();
     subscription_ = create_subscription<geometry_msgs::msg::Twist>(
@@ -29,8 +28,8 @@ public:
         });
     timer_ = create_wall_timer(
         std::chrono::milliseconds(50), [this]() { update(); });
-    RCLCPP_INFO(get_logger(), "Listening on %s (Twist). Mode: %s",
-        subscription_->get_topic_name(), dry_run_ ? "DRY RUN; no USB output" : "LIVE motor output");
+    RCLCPP_INFO(get_logger(), "Listening on %s (Twist). LIVE motor output",
+        subscription_->get_topic_name());
   }
   ~ControlNode() override {
     if (controller_ && !controller_->stop()) {
@@ -50,15 +49,8 @@ private:
           "Drive fault; restart required: %s", controller_->fault_reason().c_str());
       return;
     }
-    if (dry_run_) {
-      const auto &duties = controller_->last_duties();
-      RCLCPP_INFO_THROTTLE(get_logger(), *get_clock(), 1000,
-          "Dry-run duties [front.M1, front.M2, back.M1, back.M2]: [%d, %d, %d, %d]",
-          duties[0], duties[1], duties[2], duties[3]);
-    }
   }
 
-  bool dry_run_{true};
   std::unique_ptr<vacuum_controller::VacuumController> controller_;
   rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr subscription_;
   rclcpp::TimerBase::SharedPtr timer_;

@@ -14,9 +14,16 @@ source install/setup.bash
 ros2 run vacuum_controller control_node --ros-args --params-file src/vacuum_crawler/vacuum_controller/config/controller.yaml
 ```
 
-The default is dry run: duties are logged and no serial ports are opened.
-To enable motors, append `-p dry_run:=false` to the run command.
-The installed config is also under `share/vacuum_controller/config`.
+The node opens both USB controllers on startup and sends motor commands directly.
+To run from a new terminal after building:
+
+```bash
+source /opt/ros/jazzy/setup.bash
+source /home/vacuum/ros2_ws/install/setup.bash
+ros2 run vacuum_controller control_node --ros-args --params-file "$(ros2 pkg prefix vacuum_controller)/share/vacuum_controller/config/controller.yaml"
+```
+
+The installed config is under `share/vacuum_controller/config`.
 
 ## Wiring and settings
 

@@ -22,7 +22,6 @@ struct DriveConfig {
   double max_duty_fraction{0.25};
   double cmd_timeout_s{0.50};
   std::int64_t serial_timeout_ms{100};
-  bool dry_run{true};
 };
 
 // No ROS dependencies. Owns motion calculations, command age, and fault state.

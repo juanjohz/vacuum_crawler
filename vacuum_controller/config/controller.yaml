@@ -12,4 +12,3 @@ vacuum_controller:
     max_duty_fraction: 0.25
     cmd_timeout_s: 0.50
     serial_timeout_ms: 100
-    dry_run: true
