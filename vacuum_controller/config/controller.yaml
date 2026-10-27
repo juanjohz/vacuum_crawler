@@ -1,0 +1,15 @@
+vacuum_controller:
+  ros__parameters:
+    # Front, then back. Recheck USB names after reconnecting.
+    ports: ["/dev/ttyACM1", "/dev/ttyACM0"]
+    addresses: [128, 129]
+    # Front M1, front M2, back M1, back M2.
+    motor_sides: ["right", "left", "right", "left"]
+    motor_signs: [-1, -1, -1, -1]
+    # Example values: measure the crawler and calibrate the speed scale.
+    wheel_separation_m: 0.30
+    wheel_speed_at_full_duty_mps: 0.50
+    max_duty_fraction: 0.25
+    cmd_timeout_s: 0.50
+    serial_timeout_ms: 100
+    dry_run: true

@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>vacuum_controller</name>
+  <version>0.2.0</version>
+  <description>C++ RoboClaw driver, differential-drive controller, and cmd_vel node.</description>
+  <!-- Replace the email and license with your existing repository metadata. -->
+  <maintainer email="replace-me@example.com">Juan Hernandez</maintainer>
+  <license>TODO</license>
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <depend>rclcpp</depend>
+  <depend>geometry_msgs</depend>
+  <test_depend>python3</test_depend>
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

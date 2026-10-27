@@ -2,7 +2,7 @@ from basicmicro import Basicmicro
 import time
 
 PORT = "/dev/ttyACM0"
-ADDRESS = 0x80
+ADDRESS = 0x81
 BAUD = 38400
 
 DUTY = -15000
@@ -22,7 +22,7 @@ try:
     print("Running motors...")
 
     rc.DutyAccelM1(ADDRESS, 0, DUTY)
-    rc.DutyAccelM2(ADDRESS, 0, DUTY)
+  #  rc.DutyAccelM2(ADDRESS, 0, DUTY)
 
     time.sleep(DURATION)
 
