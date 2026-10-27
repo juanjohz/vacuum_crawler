@@ -27,10 +27,27 @@ The installed config is under `share/vacuum_controller/config`.
 
 ## Wiring and settings
 
-`config/controller.yaml` contains the settings. Defaults follow the verified
-mapping in the current Python test scripts: front uses ttyACM1/address 128;
-back uses ttyACM0/address 129. The older testing README has outdated addresses. Each controller has M1 right and M2 left.
-All motors use negative duty for forward. USB names can change on reconnect.
+`config/controller.yaml` uses persistent USB paths, in front/back order:
+
+| Position | Device path | Packet address |
+| --- | --- | --- |
+| Front | `/dev/serial/by-path/platform-xhci-hcd.1-usb-0:2:1.0` | 128 (`0x80`) |
+| Back | `/dev/serial/by-path/platform-xhci-hcd.0-usb-0:2:1.0` | 129 (`0x81`) |
+
+Keep each controller in the same physical USB port. These paths remain useful
+when `ttyACM` numbering changes; moving cables to different ports changes the
+mapping. Both controllers report the same USB identifier, so `by-id` cannot
+uniquely distinguish them.
+
+Use `--params-file` as shown above to load these paths. Running the node without
+it uses the compiled defaults, currently front `/dev/ttyACM0` and back
+`/dev/ttyACM1`, which can change after reconnecting. Rebuild `vacuum_controller`
+after editing the source YAML if using the installed config, or pass the source
+YAML directly as in the first command.
+
+Each controller has M1 right and M2 left. All motors use negative duty for forward.
+The standalone Python scripts have their own port settings; they do not load
+this YAML. See the [testing guide](../vacuum_testing/testing_README.md).
 
 Measure `wheel_separation_m` and calibrate `wheel_speed_at_full_duty_mps` before
 relying on speed commands. This is open-loop duty control, with no encoder feedback

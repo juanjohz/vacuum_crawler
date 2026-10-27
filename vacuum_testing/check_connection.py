@@ -7,8 +7,8 @@ from basicmicro import Basicmicro
 
 # Port numbers may change after reconnecting USB devices.
 CONTROLLERS = [
-    ("/dev/ttyACM0", 0x81),
-    ("/dev/ttyACM1", 0x80),
+    ("/dev/ttyACM0", 0x80),
+    ("/dev/ttyACM1", 0x81),
 ]
 
 BAUD_RATE = 38400

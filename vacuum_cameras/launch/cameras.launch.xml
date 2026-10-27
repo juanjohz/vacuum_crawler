@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="camera0" default="0" description="First libcamera index"/>
+  <arg name="camera1" default="1" description="Second libcamera index"/>
+  <arg name="width" default="320"/>
+  <arg name="height" default="240"/>
+  <arg name="frame_duration_us" default="100000" description="Fixed frame duration in microseconds: 100000 = 10 FPS, 200000 = 5 FPS"/>
+  <arg name="jpeg_quality" default="60" description="JPEG quality for compressed image subscribers"/>
+
+  <node pkg="vacuum_cameras" exec="camera_node" namespace="/cameras/camera0" name="camera" output="screen">
+    <param name="camera" value="$(var camera0)" type="int"/>
+    <param name="width" value="$(var width)" type="int"/>
+    <param name="height" value="$(var height)" type="int"/>
+    <param name="FrameDurationLimits" value="[$(var frame_duration_us), $(var frame_duration_us)]"/>
+    <param name="role" value="viewfinder"/>
+    <param name="format" value="RGB888"/>
+    <param name="jpeg_quality" value="$(var jpeg_quality)" type="int"/>
+    <param name="frame_id" value="camera0_optical_frame"/>
+    <remap from="~/image_raw" to="image_raw"/>
+    <remap from="~/camera_info" to="camera_info"/>
+    <remap from="~/image_raw/compressed" to="image_raw/compressed"/>
+  </node>
+
+  <node pkg="vacuum_cameras" exec="camera_node" namespace="/cameras/camera1" name="camera" output="screen">
+    <param name="camera" value="$(var camera1)" type="int"/>
+    <param name="width" value="$(var width)" type="int"/>
+    <param name="height" value="$(var height)" type="int"/>
+    <param name="FrameDurationLimits" value="[$(var frame_duration_us), $(var frame_duration_us)]"/>
+    <param name="role" value="viewfinder"/>
+    <param name="format" value="RGB888"/>
+    <param name="jpeg_quality" value="$(var jpeg_quality)" type="int"/>
+    <param name="frame_id" value="camera1_optical_frame"/>
+    <remap from="~/image_raw" to="image_raw"/>
+    <remap from="~/camera_info" to="camera_info"/>
+    <remap from="~/image_raw/compressed" to="image_raw/compressed"/>
+  </node>
+</launch>

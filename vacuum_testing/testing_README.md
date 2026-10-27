@@ -13,13 +13,15 @@ The Python environment lives outside the ROS 2 workspace. Test scripts and depen
     └── src/
         └── vacuum_crawler/
             ├── .gitignore
+            ├── vacuum_cameras/
+            ├── vacuum_controller/
             ├── vacuum_teleop/
             └── vacuum_testing/
                 ├── check_connection.py
                 ├── test_one_motor.py
                 ├── test_four_motors.py
                 ├── requirements-roboclaw.txt
-                └── testing_README.txt
+                └── testing_README.md
 ```
 
 Do not commit `roboclaw_env`. Recreate it from the dependency file when needed.
@@ -119,8 +121,22 @@ USB port numbers can change after rebooting or reconnecting. The mapping below w
 
 | Position | USB port during testing | Packet address | Firmware |
 |---|---|---|---|
-| Front | `/dev/ttyACM1` | `0x81` | USB Roboclaw 2x7a v4.2.8 |
-| Back | `/dev/ttyACM0` | `0x80` | USB Roboclaw 2x7a v4.2.8 |
+| Front | `/dev/ttyACM0` | `0x80` | USB Roboclaw 2x7A v4.4.9 |
+| Back | `/dev/ttyACM1` | `0x81` | USB Roboclaw 2x7a v4.2.8 |
+
+The port/address and firmware pairs above were checked on October 27, 2026.
+Front/back roles follow the controller configuration.
+For stable paths with the current physical USB connections, use:
+
+- Front (`0x80`): `/dev/serial/by-path/platform-xhci-hcd.1-usb-0:2:1.0`
+- Back (`0x81`): `/dev/serial/by-path/platform-xhci-hcd.0-usb-0:2:1.0`
+
+Keep each cable in the same USB port. The ROS controller YAML already uses these
+paths, but the Python scripts do not read that YAML. `check_connection.py`
+currently uses the numbered ports in the table. `test_four_motors.py` still has
+front `/dev/ttyACM1` and back `/dev/ttyACM0`; `test_one_motor.py` still pairs
+`/dev/ttyACM0` with `0x81`. Update their port constants to the matching persistent
+paths before running motor tests.
 
 Both controllers use the following motor mapping:
 
@@ -155,6 +171,10 @@ Enter the testing directory:
 cd /home/vacuum/ros2_ws/src/vacuum_crawler/vacuum_testing
 ```
 
+Stop the ROS control node before running these scripts so only one process
+uses the serial connections. `check_connection.py` only reads firmware; the
+other two scripts move motors. Check their port constants as described above.
+
 Run one test at a time:
 
 ```bash
@@ -177,4 +197,8 @@ deactivate
 
 Activation applies to the current terminal session. Activate again in a new terminal.
 
-Alternatively, run a script using the environment’s full
+Alternatively, run the connection check using the environment's full Python path:
+
+```bash
+/home/vacuum/roboclaw_env/bin/python /home/vacuum/ros2_ws/src/vacuum_crawler/vacuum_testing/check_connection.py
+```

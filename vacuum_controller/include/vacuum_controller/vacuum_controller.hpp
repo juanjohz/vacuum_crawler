@@ -11,7 +11,7 @@
 namespace vacuum_controller {
 
 struct DriveConfig {
-  std::vector<std::string> ports{"/dev/ttyACM1", "/dev/ttyACM0"};
+  std::vector<std::string> ports{"/dev/ttyACM0", "/dev/ttyACM1"};
   std::vector<std::int64_t> addresses{128, 129};
   // Controller 0 is front; controller 1 is back. Negative duty drives forward.
   // Order: controller 0 M1, controller 0 M2, controller 1 M1, controller 1 M2.

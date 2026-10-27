@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -e
+vendor="@CMAKE_CURRENT_SOURCE_DIR@/vendor/install"
+if [[ ! -x "$vendor/lib/camera_ros/camera_node" ]]; then
+    echo "Camera driver missing. Run @CMAKE_CURRENT_SOURCE_DIR@/scripts/build_vendor.sh, then rebuild vacuum_cameras." >&2
+    exit 1
+fi
+export LD_LIBRARY_PATH="$vendor/lib:${LD_LIBRARY_PATH:-}"
+export LIBCAMERA_IPA_MODULE_PATH="$vendor/lib/libcamera/ipa"
+export LIBCAMERA_IPA_PROXY_PATH="$vendor/libexec/libcamera"
+export LIBCAMERA_IPA_CONFIG_PATH="$vendor/share/libcamera/ipa"
+exec "$vendor/lib/camera_ros/camera_node" "$@"
