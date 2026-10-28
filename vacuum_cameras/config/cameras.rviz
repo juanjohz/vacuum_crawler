@@ -1,0 +1,37 @@
+Panels:
+  - Class: rviz_common/Displays
+    Name: Displays
+Visualization Manager:
+  Class: ""
+  Displays:
+    - Class: rviz_default_plugins/Image
+      Enabled: true
+      Name: Camera 0
+      Topic:
+        Value: /cameras/camera0/image_raw/compressed
+        Depth: 1
+        History Policy: Keep Last
+        Reliability Policy: Best Effort
+        Durability Policy: Volatile
+      Value: true
+    - Class: rviz_default_plugins/Image
+      Enabled: true
+      Name: Camera 1
+      Topic:
+        Value: /cameras/camera1/image_raw/compressed
+        Depth: 1
+        History Policy: Keep Last
+        Reliability Policy: Best Effort
+        Durability Policy: Volatile
+      Value: true
+  Enabled: true
+  Global Options:
+    Background Color: 48; 48; 48
+    Fixed Frame: camera0_optical_frame
+    Frame Rate: 30
+  Name: root
+  Tools: []
+  Value: true
+Window Geometry:
+  Width: 1200
+  Height: 800

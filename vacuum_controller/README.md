@@ -39,11 +39,12 @@ when `ttyACM` numbering changes; moving cables to different ports changes the
 mapping. Both controllers report the same USB identifier, so `by-id` cannot
 uniquely distinguish them.
 
-Use `--params-file` as shown above to load these paths. Running the node without
-it uses the compiled defaults, currently front `/dev/ttyACM0` and back
-`/dev/ttyACM1`, which can change after reconnecting. Rebuild `vacuum_controller`
-after editing the source YAML if using the installed config, or pass the source
-YAML directly as in the first command.
+The compiled defaults use these same persistent paths, so the plain command
+`ros2 run vacuum_controller control_node` also works after rebuilding and sourcing
+the workspace. USB enumeration order no longer swaps the configured addresses.
+Keep the cables in their assigned physical ports. The YAML can override defaults
+for a different wiring arrangement or tuning. Rebuild after changing source YAML
+when using the installed copy.
 
 Each controller has M1 right and M2 left. All motors use negative duty for forward.
 The standalone Python scripts have their own port settings; they do not load

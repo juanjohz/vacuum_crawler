@@ -88,11 +88,54 @@ For RViz on another PC, prefer compressed transport even over Ethernet:
 sudo apt install ros-jazzy-compressed-image-transport
 ```
 
-Restart RViz after installing the plugin. For each Image display, keep the base
-`/cameras/camera0/image_raw` or `/cameras/camera1/image_raw` topic, set **Transport
-Hint** to **compressed**, set **Reliability Policy** to **Best Effort**, and set
-**Queue Size** to **1**. Disable any additional displays subscribing to raw
-camera images. The transport plugin selects the `/compressed` topic internally.
+Restart RViz after installing the plugin. In Jazzy, select the compressed topic
+**directly** in each Image display:
+`/cameras/camera0/image_raw/compressed` and
+`/cameras/camera1/image_raw/compressed`. Under Topic, set **Reliability Policy**
+to **Best Effort**, **History Policy** to **Keep Last**, and **Depth** to **1**.
+Disable other Image/Camera displays that still subscribe to the raw topics.
+The earlier instruction to use a separate Transport Hint field was incorrect for
+this Jazzy RViz implementation.
+
+A ready-made preset is in `config/cameras.rviz`. From your PC terminal:
+
+```bash
+scp vacuum@10.42.0.187:/home/vacuum/ros2_ws/src/vacuum_crawler/vacuum_cameras/config/cameras.rviz ~/vacuum-cameras.rviz
+source /opt/ros/jazzy/setup.bash
+rviz2 -d ~/vacuum-cameras.rviz
+```
+
+Close the old RViz instance first so its raw subscriptions do not remain active.
+The preset contains only the two Image displays and does not need robot TF.
+It is installed under `share/vacuum_cameras/config` when the package is built.
+
+### Image freeze investigation (October 28, 2026)
+
+A 12-second measurement on the Pi found both cameras publishing at 10.03 FPS,
+with maximum frame gaps around 103 ms. Raw frame timestamp ages had medians of
+14–15 ms, and compressed frames 14–16 ms. The Ethernet link reported 1 Gbps,
+no interface errors/drops, and a five-packet ping to the PC averaged 0.5 ms.
+These are point-in-time measurements, not proof against intermittent faults.
+
+RViz was subscribing to both **raw** topics with **reliable** delivery. Raw
+payload is approximately 37 Mbps combined. The measured JPEG payload averaged
+about 0.68 Mbps combined for the scenes sampled. The compressed preset substantially
+reduces transport load and avoids requesting retransmission of old preview frames.
+This is a mitigation to test, not a confirmed diagnosis of the remote freeze.
+
+If the Image display freezes again, leave it running and compare these commands
+on the Pi and on the viewing PC (one topic at a time):
+
+```bash
+ros2 topic hz /cameras/camera0/image_raw/compressed --qos-reliability best_effort
+ros2 topic hz /cameras/camera1/image_raw/compressed --qos-reliability best_effort
+```
+
+If the Pi continues at 10 FPS but the PC stalls, investigate DDS/network delivery.
+If both receive steadily while the picture in RViz freezes, inspect the Image
+Status/message counter and the RViz rendering path. If the Pi also stalls,
+investigate capture and camera-driver logs. Each rate-check command adds a
+subscriber, so use short checks and stop them afterward.
 
 Two 320×240 `bgr8` feeds at 10 FPS require about 37 Mbps of raw image payload
 alone, compared with 442 Mbps at 640×480 and 30 FPS. Compressed transport

@@ -1,0 +1,8 @@
+teensy_bridge:
+  ros__parameters:
+    port: /dev/ttyAMA0 # Confirm PCB routing; free this UART from the Linux console first.
+    baud: 115200
+    command_scale: 10.0 # vacuum_teleop publishes axes[4] * 10 in angular.x
+    max_speed_deg_s: 20.0
+    deadband: 0.05
+    command_timeout: 0.3

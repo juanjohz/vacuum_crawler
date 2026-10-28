@@ -25,3 +25,6 @@ ros2 launch vacuum_cameras cameras.launch.xml
 For firmware connection checks and standalone motor tests, see the
 [testing guide](vacuum_testing/testing_README.md). The Python scripts use their
 own port constants rather than the ROS controller YAML.
+
+For joystick axis 4 control of a Teensy-connected servo, see the
+[servo bridge guide](servo_controller/README.md) for firmware, wiring checks, and ROS commands.

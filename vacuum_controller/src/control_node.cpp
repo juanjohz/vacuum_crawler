@@ -21,6 +21,8 @@ public:
     config.serial_timeout_ms = declare_parameter("serial_timeout_ms", config.serial_timeout_ms);
     controller_ = std::make_unique<vacuum_controller::VacuumController>(std::move(config));
     controller_->connect();
+    RCLCPP_INFO(get_logger(), "Front firmware: %s; back firmware: %s",
+        controller_->versions()[0].c_str(), controller_->versions()[1].c_str());
     subscription_ = create_subscription<geometry_msgs::msg::Twist>(
         "cmd_vel", rclcpp::QoS(1),
         [this](geometry_msgs::msg::Twist::ConstSharedPtr message) {

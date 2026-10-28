@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.8)
 project(vacuum_cameras)
 find_package(ament_cmake REQUIRED)
-install(DIRECTORY launch patches DESTINATION share/${PROJECT_NAME})
+install(DIRECTORY launch patches config DESTINATION share/${PROJECT_NAME})
 install(FILES README.md DESTINATION share/${PROJECT_NAME})
 configure_file(scripts/camera_node.in ${CMAKE_CURRENT_BINARY_DIR}/camera_node @ONLY)
 install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/camera_node DESTINATION lib/${PROJECT_NAME})
